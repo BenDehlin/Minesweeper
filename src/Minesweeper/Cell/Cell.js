@@ -1,54 +1,69 @@
 import React, { useState, useEffect } from "react"
+import { FaBomb } from "react-icons/fa"
+import { MdFlag } from "react-icons/md"
+import { createUseStyles } from "react-jss"
 
-const Cell = ({ cell, checkNeighbors, clickCell }) => {
+const useStyles = createUseStyles({
+  cellStyle: {
+    height: 50,
+    width: 50,
+    backgroundColor: "black",
+    border: "1px solid white",
+    "&:hover": {
+      backgroundColor: "green"
+    }
+  }
+})
+
+const Cell = ({ cell, clickCell, flagCell }) => {
+  const { cellStyle } = useStyles()
   const { x, y, isBomb } = cell
-  // const [x] = useState(cell.x)
-  // const [y] = useState(cell.y)
-  // const [isBomb] = useState(cell.isBomb)
   const [count, setCount] = useState(0)
   const [isClicked, setIsClicked] = useState(false)
+  const [isFlagged, setIsFlagged] = useState(false)
 
   useEffect(() => {
     setCount(cell.count)
     setIsClicked(cell.isClicked)
-  }, [cell.count, cell.isClicked])
-
-  // const clickCell = () => {
-  //   if(isClicked){
-  //     return
-  //   }
-  //   setIsClicked(true)
-  //   if(isBomb){
-  //     alert('You died!')
-  //   }
-  //   const newCount = checkNeighbors(x, y)
-  //   setCount(newCount)
-  //   if(newCount === 0){
-
-  //   }
-  // }
+    setIsFlagged(cell.isFlagged)
+  }, [cell.count, cell.isClicked, cell.isFlagged])
 
   return (
     <div
+      className={cellStyle}
       style={{
-        height: 50,
-        width: 50,
-        backgroundColor: isClicked ? "green" : "black",
-        border: "1px solid white"
+        backgroundColor: isClicked && "green"
       }}
+      onContextMenu={e => flagCell(x, y, e)}
       onClick={() => clickCell(x, y)}
     >
       <div
+        // className={cellStyle}
         style={{
           height: "100%",
           width: "100%",
-          backgroundColor: isClicked && isBomb && "red",
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems:'center'
+          backgroundColor: isFlagged && "blue",
+          // backgroundColor: isClicked && isBomb && 'red',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
         }}
       >
-        {isBomb && isClicked ? "X" : count}
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            // backgroundColor: isFlagged && "blue",
+            backgroundColor: isClicked && isBomb && 'red',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          {isFlagged && <MdFlag size={30} />}
+          {isClicked && isBomb && <FaBomb size={25} />}
+          {isClicked && !isBomb && count}
+        </div>
       </div>
     </div>
   )

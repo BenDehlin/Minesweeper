@@ -1,66 +1,94 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import Cell from "../Cell/Cell"
 
-const Board = ({ rows, columns, bombs }) => {
-  const [grid, setGrid] = useState([])
-  useEffect(() => {
-    genGrid()
-    genBombs()
-  }, [rows, columns, bombs])
+const Board = ({ grid, rows, columns }) => {
+  const [neighbors] = useState([
+    [1, 0],
+    [1, 1],
+    [1, -1],
+    [0, 1],
+    [0, -1],
+    [-1, 0],
+    [-1, 1],
+    [-1, -1]
+  ])
 
-  const genGrid = () => {
-    const newGrid = grid
-    for (let x = 0; x < rows; x++) {
-      newGrid.push([])
-      for (let y = 0; y < columns; y++) {
-        newGrid[x].push({
-          x,
-          y,
-          isBomb: false,
-          isClicked: false
+  const checkNeighbors = (x, y) => {
+    let count = 0
+    neighbors.forEach(([newX, newY]) => {
+      if (
+        x + newX >= 0 &&
+        x + newX < rows &&
+        y + newY >= 0 &&
+        y + newY < columns
+      ) {
+        if (grid[x + newX][y + newY].isBomb) {
+          count++
+        }
+      }
+    })
+    return count
+  }
+
+  const clickCell = (x, y) => {
+    const newGrid = [...grid]
+    if (newGrid[x][y].isClicked) {
+      return
+    }
+    if (newGrid[x][y].isBomb) {
+      revealBoard()
+    }
+    const newCount = checkNeighbors(x, y)
+    newGrid[x][y].count = newCount
+    newGrid[x][y].isClicked = true
+      if (!newGrid[x][y].isBomb && newCount === 0) {
+        neighbors.forEach(([newX, newY]) => {
+          if (
+            x + newX >= 0 &&
+            x + newX < rows &&
+            y + newY >= 0 &&
+            y + newY < columns
+          ) {
+            clickCell(x + newX, y + newY)
+          }
         })
       }
-    }
-    setGrid(newGrid)
   }
-  const genBombs = () => {
-    const newGrid = grid
-    for (let i = 0; i < bombs; i++) {
-      let x = Math.floor(Math.random() * rows)
-      let y = Math.floor(Math.random() * columns)
-      newGrid[x][y].isBomb = true
-    }
-    setGrid(newGrid)
+
+  const revealBoard = () => {
+    grid.forEach((row, rowIndex) => {
+      row.forEach((column, columnIndex) => {
+        grid[rowIndex][columnIndex].isClicked = true
+      })
+    })
   }
   return (
     <div
       style={{
-        border: '1px solid black',
-        // backgroundColor: "green",
-        height: "70vh",
-        width: "70vw"
-        // display: "grid",
-        // gridTemplateColumns: `repeat(autoFill, ${rows})`
+        height: `${columns * 10 + columns * 2}`,
+        width: `${rows * 10 + rows * 2}`,
+        display: "grid",
+        margin: 0,
+        padding: 0,
+        gridTemplateRows: `repeat(${rows}, 1fr)`,
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        gridColumnGap: 0,
+        gridRowGap: 0
       }}
     >
-      {rows}
-      {columns}
-      {/* {grid} */}
       {grid.map(row => {
         return (
-          // <div style={{ width: 10, height: 10, backgroundColor: 'red' }}>
-          //   {cell.x}, {cell.y}
-          // </div>
-          <div>
+          <>
             {row.map(cell => {
               return (
-                <div>
-                  <h1>Hello</h1>
-                  <Cell cell={cell} />
-                </div>
+                <Cell
+                  cell={cell}
+                  checkNeighbors={checkNeighbors}
+                  clickCell={clickCell}
+                />
               )
             })}
-          </div>
+          </>
         )
       })}
     </div>

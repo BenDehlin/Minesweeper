@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from "react"
 import BoardHeader from "../BoardHeader/BoardHeader"
 import BoardClass from "../Board/BoardClass"
+// import Board from '../Board/Board'
 
 const Game = () => {
   const [rows, setRows] = useState(10)
   const [columns, setColumns] = useState(10)
   const [bombs, setBombs] = useState(25)
+  const [flags, setFlags] = useState(25)
   //Need to figure out making this immutable again with useRef or external library
   let [grid, setGrid] = useState([])
 
   useEffect(() => {
-    genBoard(10, 10, 25)
-
+    genBoard(10, 10, 25, 25)
   }, [])
 
-  const genBoard = async (numRows, numColumns, numBombs) => {
+  const genBoard = async (numRows, numColumns, numBombs, numFlags) => {
     setRows(numRows)
     setColumns(numColumns)
     setBombs(numBombs)
-    await genGrid()
-    await genBombs()
+    setFlags(numFlags)
+    await genGrid(numRows, numColumns)
+    await genBombs(numRows, numColumns, numBombs)
   }
 
-  const genGrid = () => {
+  const genGrid = (numRows, numColumns) => {
     grid = []
-    for (let x = 0; x < rows; x++) {
+    for (let x = 0; x < numRows; x++) {
       grid.push([])
-      for (let y = 0; y < columns; y++) {
+      for (let y = 0; y < numColumns; y++) {
         grid[x].push({
           x,
           y,
@@ -38,18 +40,25 @@ const Game = () => {
     }
     setGrid(grid)
   }
-  const genBombs = () => {
+  const genBombs = (numRows, numColumns, numBombs) => {
     const newGrid = [...grid]
-    for (let i = 0; i < bombs; i++) {
-      let x = Math.floor(Math.random() * rows)
-      let y = Math.floor(Math.random() * columns)
+    for (let i = 0; i < numBombs; i++) {
+      let x = Math.floor(Math.random() * numRows)
+      let y = Math.floor(Math.random() * numColumns)
       newGrid[x][y].isBomb = true
     }
     setGrid(newGrid)
   }
 
   const reset = () => {
-    genBoard(10, 10, 25)
+    genBoard(10, 10, 25, 25)
+  }
+
+  const incrementFlags = () => {
+    setFlags(flags + 1)
+  }
+  const decrementFlags = () => {
+    setFlags(flags - 1)
   }
 
   return (
@@ -61,8 +70,16 @@ const Game = () => {
         margin: 10
       }}
     >
-      <BoardHeader bombs={bombs} reset={reset} />
-      <BoardClass rows={rows} columns={columns} bombs={bombs} grid={grid} setGrid={setGrid} />
+      <BoardHeader flags={flags} reset={reset} />
+      <BoardClass
+        rows={rows}
+        columns={columns}
+        bombs={bombs}
+        grid={grid}
+        incrementFlags={incrementFlags}
+        decrementFlags={decrementFlags}
+      />
+      {/* <Board rows={rows} columns={columns} bombs={bombs} grid={grid} /> */}
     </div>
   )
 }

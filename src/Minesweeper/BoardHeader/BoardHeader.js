@@ -1,28 +1,44 @@
 import React from "react"
 import { createUseStyles } from "react-jss"
+import { IoIosRefreshCircle } from "react-icons/io"
 
 const useStyles = createUseStyles({
   header: {
     backgroundColor: "black",
-    border: '2px solid white',
+    border: "2px solid white",
     width: 500,
-    height: 100,
+    // minHeight: 100,
     display: "flex",
-    flexFlow: 'column',
+    flexFlow: "column",
     justifyContent: "center",
     alignItems: "center",
     color: "white"
+  },
+  h1: {
+    margin: 10
+  },
+  icon: {
+    backgroundColor: "green",
+    borderRadius: "50%",
+    marginBottom: 10,
+    "&:hover": {
+      backgroundColor: 'red'
+    }
   }
 })
 
-const BoardHeader = ({ bombs, reset }) => {
-  const {header} = useStyles()
+const BoardHeader = ({ flags, reset }) => {
+  const { header, h1, icon } = useStyles()
   return (
     <div className={header}>
-      <h1>BOMBS: {bombs}</h1>
-      <button
-      onClick = {() => reset()}
-      >Reset</button>
+      <h1 className={h1}>BOMBS: {flags}</h1>
+      <IoIosRefreshCircle
+        size={50}
+        className={icon}
+        onClick={() => {
+          reset()
+        }}
+      />
     </div>
   )
 }

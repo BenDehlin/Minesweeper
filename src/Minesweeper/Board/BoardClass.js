@@ -22,14 +22,14 @@ class BoardClass extends Component {
   //   this.genGrid()
   //   this.genBombs()
   // }
-  
+
   // componentDidUpdate(prevProps){
   //   if(prevProps !== this.props){
   //     this.genGrid()
   //     this.genBombs()
   //   }
   // }
-  
+
   // genGrid = () => {
   //   const newGrid = this.state.grid
   //   const { rows, columns, bombs } = this.props
@@ -57,54 +57,74 @@ class BoardClass extends Component {
   //   }
   //   this.setState({ grid: newGrid })
   // }
-  
+
   checkNeighbors = (x, y) => {
     // const { grid, neighbors } = this.state
     const { neighbors } = this.state
     const { rows, columns, grid } = this.props
     let count = 0
-    neighbors.forEach(([newX,newY]) => {
-      if(x+newX >= 0 && x+newX < rows && y+newY >= 0 && y + newY < columns){
-        if(grid[x+newX][y+newY].isBomb){
-          count ++
+    neighbors.forEach(([newX, newY]) => {
+      if (
+        x + newX >= 0 &&
+        x + newX < rows &&
+        y + newY >= 0 &&
+        y + newY < columns
+      ) {
+        if (grid[x + newX][y + newY].isBomb) {
+          count++
         }
       }
     })
     return count
   }
-  
+
   clickCell = (x, y) => {
     // const {grid, neighbors} = this.state
-    const {neighbors} = this.state
-    const {grid, rows, columns} = this.props
+    const { neighbors } = this.state
+    const { grid, rows, columns } = this.props
     const newGrid = [...grid]
-    if(newGrid[x][y].isClicked){
+    if (newGrid[x][y].isClicked) {
       return
     }
-    if(newGrid[x][y].isBomb){
-      alert('you died!')
+    if (newGrid[x][y].isBomb) {
+      alert("you died!")
+      this.revealBoard()
     }
     const newCount = this.checkNeighbors(x, y)
-    newGrid[x][y].count=newCount
+    newGrid[x][y].count = newCount
     newGrid[x][y].isClicked = true
-    this.setState({grid: newGrid}, () => {
-      if(!newGrid[x][y].isBomb && newCount===0){
+    this.setState({ grid: newGrid }, () => {
+      if (!newGrid[x][y].isBomb && newCount === 0) {
         neighbors.forEach(([newX, newY]) => {
-          if(x+newX >= 0 && x+newX < rows && y+newY >= 0 && y + newY < columns){
-            this.clickCell(x+newX, y+newY)
+          if (
+            x + newX >= 0 &&
+            x + newX < rows &&
+            y + newY >= 0 &&
+            y + newY < columns
+          ) {
+            this.clickCell(x + newX, y + newY)
           }
         })
       }
     })
   }
-  
+
+  revealBoard = () => {
+    const { grid, setGrid } = this.props
+    grid.forEach((row, rowIndex) => {
+      row.forEach((column, columnIndex) => {
+        grid[rowIndex][columnIndex].isClicked = true
+      })
+    })
+  }
+
   render() {
     const { grid, rows, columns } = this.props
     return (
       <div
-      style={{
-        height: 550,
-        width: 550,
+        style={{
+          height: `${columns * 10 + columns * 2}`,
+          width: `${rows * 10 + rows * 2}`,
           display: "grid",
           margin: 0,
           padding: 0,
@@ -118,7 +138,13 @@ class BoardClass extends Component {
           return (
             <>
               {row.map(cell => {
-                return <Cell cell={cell} checkNeighbors={this.checkNeighbors} clickCell={this.clickCell} />
+                return (
+                  <Cell
+                    cell={cell}
+                    checkNeighbors={this.checkNeighbors}
+                    clickCell={this.clickCell}
+                  />
+                )
               })}
             </>
           )

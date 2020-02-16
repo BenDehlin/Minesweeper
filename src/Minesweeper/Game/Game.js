@@ -62,7 +62,7 @@ const Game = () => {
       }}
     >
       <BoardHeader bombs={bombs} reset={reset} />
-      <BoardClass rows={rows} columns={columns} bombs={bombs} grid={grid} />
+      <BoardClass rows={rows} columns={columns} bombs={bombs} grid={grid} setGrid={setGrid} />
     </div>
   )
 }

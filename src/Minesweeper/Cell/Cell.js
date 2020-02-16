@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react"
+import React, { useState, useEffect } from "react"
 
 const Cell = ({ cell, checkNeighbors, clickCell }) => {
-  const {x, y, isBomb} = cell
+  const { x, y, isBomb } = cell
   // const [x] = useState(cell.x)
   // const [y] = useState(cell.y)
   // const [isBomb] = useState(cell.isBomb)
@@ -24,7 +24,7 @@ const Cell = ({ cell, checkNeighbors, clickCell }) => {
   //   const newCount = checkNeighbors(x, y)
   //   setCount(newCount)
   //   if(newCount === 0){
-      
+
   //   }
   // }
 
@@ -33,11 +33,24 @@ const Cell = ({ cell, checkNeighbors, clickCell }) => {
       style={{
         height: 50,
         width: 50,
-        backgroundColor: isClicked ? "red" : "black",
-        border: "1px solid black"
+        backgroundColor: isClicked ? "green" : "black",
+        border: "1px solid white"
       }}
-      onClick = {() => clickCell(x, y)}
-    >{isBomb ? 'X': count}</div>
+      onClick={() => clickCell(x, y)}
+    >
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          backgroundColor: isClicked && isBomb && "red",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems:'center'
+        }}
+      >
+        {isBomb && isClicked ? "X" : count}
+      </div>
+    </div>
   )
 }
 

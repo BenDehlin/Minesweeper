@@ -32,7 +32,6 @@ const Board = ({ rows, columns, bombs }) => {
     }
     setGrid(newGrid)
   }
-  console.log(grid)
   return (
     <div
       style={{

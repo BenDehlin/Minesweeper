@@ -3,7 +3,8 @@ import { createUseStyles } from "react-jss"
 
 const useStyles = createUseStyles({
   header: {
-    backgroundColor: "green",
+    backgroundColor: "black",
+    border: '2px solid white',
     width: 500,
     height: 100,
     display: "flex",
